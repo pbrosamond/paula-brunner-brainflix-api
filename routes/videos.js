@@ -1,26 +1,54 @@
-const express = require('express')
-const router = express.Router()
-const { v4: uuidv4 } = require('uuid')
-const fs = require('fs')
+const express = require('express');
+const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
+const router = express.Router();
+
+// Load initial data from the JSON file
+let videosData = loadVideosData();
+
+// Endpoint to get all videos
 router.get('/', (req, res) => {
-  const fileData = JSON.parse(fs.readFileSync(`./data/video.json`))
+  res.json(videosData);
+});
 
-  return res.status(200).json(fileData)
-})
+// Endpoint to get a specific video by ID
+router.get('/:id', (req, res) => {
+  const videoId = req.params.id;
+  const video = videosData.find((video) => video.id === videoId);
 
-router.post('/', (req, res) => {
-  const body = req.body
-  const newVideo = {
-    id: uuidv4(),
-    ...body
+  if (video) {
+    res.json(video);
+  } else {
+    res.status(404).json({ error: 'Video not found' });
   }
+});
 
-  const fileData = JSON.parse(fs.readFileSync(`./data/video.json`))
+// Endpoint to add a new video
+router.post('/', (req, res) => {
+  const newVideo = req.body;
+  newVideo.id = uuidv4(); // Use uuid to generate a unique ID
+  videosData.push(newVideo);
 
-  fs.writeFileSync('./data/video.json', JSON.stringify([ newVideo, ...fileData ]))
+  // Update the JSON file with the new data
+  saveVideosData(videosData);
 
-  return res.status(200).json(newVideo)
-})
+  res.status(201).json(newVideo);
+});
 
-module.exports = router
+// Helper function to load video data from the JSON file
+function loadVideosData() {
+  try {
+    const data = fs.readFileSync('./data/videos.json', 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// Helper function to save video data to the JSON file
+function saveVideosData(data) {
+  fs.writeFileSync('./data/videos.json', JSON.stringify(data, null, 2), 'utf8');
+}
+
+module.exports = router;

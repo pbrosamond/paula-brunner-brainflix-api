@@ -1,28 +1,18 @@
-const express = require('express')
-const videoRoutes = require('./routes/videos')
-// INSTALL cors NPM LIBRARY AND IMPORT
-const cors = require('cors')
+const express = require('express');
+const videoRoutes = require('./routes/videos');
+const cors = require('cors');
+require('dotenv').config();
 
-// REQUIRED LINE OF CODE TO GET ACCESS TO process.env
-require('dotenv').config()
+const app = express();
 
-const app = express()
+app.use(express.json());
+app.use(cors());
 
-app.use(express.json())
-// USE CORS TO ENABLE
-app.use(cors())
+const PORT = process.env.PORT || 8000;
+const { VERSION, BASE_PATH } = process.env;
 
-// app.use('/', authMiddleware)
-
-// CREATE VARIABLES FOR YOUR ENVIRONMENT VARIABLES
-// PROCESS.ENV = object that contains your environment variables
-const PORT = process.env.PORT || 8000
-const { VERSION, BASE_PATH } = process.env
-
-// /api/v1/characters
-// app.use(`${BASE_PATH}/${VERSION}/characters`, charactersRoutes)
-app.use(`/videos`, videoRoutes)
+app.use(`/videos`, videoRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
-})
+  console.log(`Server listening on port ${PORT}`);
+});
