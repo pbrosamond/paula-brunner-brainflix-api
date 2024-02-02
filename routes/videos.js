@@ -7,10 +7,21 @@ const router = express.Router();
 // Load initial data from the JSON file
 let videosData = loadVideosData();
 
-// Endpoint to get all videos
-router.get('/', (req, res) => {
-  res.json(videosData);
-});
+router.route('/')
+  .get((req, res) => {
+    res.json(videosData);
+  })
+  .post((req, res) => {
+    const newVideo = req.body;
+    if (!newVideo.title || !newVideo.description) return res.status(404).json("All new video uploads must have a title and a description") 
+    newVideo.id = uuidv4(); // Use uuid to generate a unique ID
+    videosData.push(newVideo);
+  
+    // Update the JSON file with the new data
+    saveVideosData(videosData);
+  
+    res.status(201).json(newVideo);
+})
 
 // Endpoint to get a specific video by ID
 router.get('/:id', (req, res) => {
@@ -18,22 +29,10 @@ router.get('/:id', (req, res) => {
   const video = videosData.find((video) => video.id === videoId);
 
   if (video) {
-    res.json(video);
+    res.status(200).json(video);
   } else {
     res.status(404).json({ error: 'Video not found' });
   }
-});
-
-// Endpoint to add a new video
-router.post('/', (req, res) => {
-  const newVideo = req.body;
-  newVideo.id = uuidv4(); // Use uuid to generate a unique ID
-  videosData.push(newVideo);
-
-  // Update the JSON file with the new data
-  saveVideosData(videosData);
-
-  res.status(201).json(newVideo);
 });
 
 // Helper function to load video data from the JSON file

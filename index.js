@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 const PORT = process.env.PORT || 8000;
-const { VERSION, BASE_PATH } = process.env;
+const { VERSION, BASE_PATH } = process.env; //It's one or the other not both.
 
 app.use(`/videos`, videoRoutes);
 
