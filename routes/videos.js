@@ -15,6 +15,14 @@ router.route('/')
     const newVideo = req.body;
     if (!newVideo.title || !newVideo.description) return res.status(404).json("All new video uploads must have a title and a description") 
     newVideo.id = uuidv4(); // Use uuid to generate a unique ID
+    newVideo.channel = "Lord of the Abyss";
+    newVideo.image = "https://pbs.twimg.com/media/FPLgzZNXoAoy_1T?format=jpg&name=large";
+    newVideo.views = "Too many to count";
+    newVideo.likes = "Too many to count";
+    newVideo.duration = "The perfect duration";
+    newVideo.video = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; 
+    newVideo.timestamp = new Date().getTime(); 
+    newVideo.comments = [];
     videosData.push(newVideo);
   
     // Update the JSON file with the new data
